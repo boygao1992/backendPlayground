@@ -13,8 +13,15 @@ GraphQL comes with a set of default scalar types out of the box:
 const { inspect } = require( 'util' )
 
 const {
+  // Schema
   GraphQLSchema,
+  // Definitions
   GraphQLObjectType,
+  GraphQLList,
+  GraphQLInputObjectType,
+  GraphQLNonNull,
+  GraphQLInterfaceType,
+  // Scalars
   GraphQLID,
   GraphQLString,
   GraphQLInt,
@@ -24,6 +31,10 @@ const {
 const G = {
   schema: x => new GraphQLSchema( x ),
   object: x => new GraphQLObjectType( x ),
+  list: x => new GraphQLList( x ),
+  input: x => new GraphQLInputObjectType( x ),
+  required: x => new GraphQLNonNull( x ),
+  interface: x => new GraphQLInterfaceType( x ),
   string: GraphQLString,
   int: GraphQLInt,
   bool: GraphQLBoolean,
@@ -33,26 +44,15 @@ const G = {
 const express = require( 'express' )
 const graphqlHTTP = require( 'express-graphql' )
 
+const {
+  getVideoById,
+  getAllVideos,
+  createVideo,
+} = require( './data/index' )
+
 const PORT = process.env.PORT || 3000;
 const server = express()
 
-/* --- Data --- */
-
-const videoA = {
-  id: '1',
-  title: 'bar',
-  duration: 1,
-  watched: true,
-}
-
-const videoB = {
-  id: '2',
-  title: 'foo',
-  duration: 180,
-  watched: false,
-}
-
-const videos = [ videoA, videoB ]
 
 /* --- GraphQL Schema --- */
 
@@ -93,7 +93,7 @@ query myFirstQuery {
 `
 */
 
-const videoType = G.object( {
+const VideoType = G.object( {
   name: 'Video',
   description: 'A video',
   fields: {
@@ -109,35 +109,96 @@ const videoType = G.object( {
       type: G.int,
       description: 'The duration of the video.',
     },
-    watched: {
+    released: {
       type: G.bool,
-      description: 'Whether or not the user has watched the video.',
+      description: 'Whether or not the video is released.',
     },
   }
 } )
 
-const queryType = G.object( {
+const NodeInterface = G.interface( {
+  name: 'Node',
+    fields: {
+      id: {
+        type: G.required( G.id ),
+      }
+    },
+    resolveType: object => {
+      if ( object.title ) {
+        return VideoType
+      }
+      return null
+    }
+} )
+
+const QueryType = G.object( {
   name: 'QueryType',
   description: 'The root query type',
   fields: {
     video: {
-      type: videoType,
-      resolve: _ => new Promise( resolve => ( resolve( videoA ) ) )
+      type: VideoType,
+      args: {
+        id: {
+          type: G.required( G.id ),
+          description: 'The id of the video.',
+        }
+      },
+      resolve: ( _, args ) => getVideoById( args )
+    },
+
+    videos: {
+      type: G.list( VideoType ),
+      resolve: getAllVideos
+    },
+  }
+} )
+
+const VideoInputType = G.input( {
+  name: 'VideoInput',
+  fields: {
+    title: {
+      type: G.required( G.string ),
+      description: 'The title of the video.',
+    },
+    duration: {
+      type: G.required( G.int ),
+      description: 'The duration of the video (in seconds).',
+    },
+    released: {
+      type: G.required( G.bool ),
+      description: 'Whether or not the video is released.',
     }
   }
 } )
 
-const schema = G.schema( {
-  query: queryType,
+const MutationType = G.object( {
+  name: 'Mutation',
+  description: 'The root mutation type.',
+  fields: {
+    createVideo: {
+      type: VideoType,
+      args: {
+        video: {
+          type: G.required( VideoInputType ),
+        },
+      },
+      resolve: ( _, { video } ) => createVideo( video )
+    },
+  }
+} )
+
+const Schema = G.schema( {
+  query: QueryType,
+  mutation: MutationType,
 } )
 
 server.use( '/graphql', graphqlHTTP( {
-  schema,
+  schema: Schema,
   graphiql: true,
 } ) )
 
 server.listen( PORT, _ => {
-  console.log( `Listening on http://localhost:${PORT}` )
+  console.log( `Listening on http://localhost:${PORT}/graphql` )
 } )
 
 // graphql( schema, query, resolvers )
