@@ -1,16 +1,19 @@
 const {
   // ADT
   List,
+  Maybe,
   // List
   filter,
   head,
   // Maybe
   option,
+  prop,
   // Predicate Function
   propEq,
   // Combinator
   compose,
   // Helper
+  ap,
   curry,
 } = require( 'crocks' )
 
@@ -59,14 +62,29 @@ const createVideo = ( { title, duration, released } ) => {
     duration,
     released,
   }
+  // direct mutation, use State Monad
   videos.push(
     video
   )
   return video
 }
 
+const VIDEO = 'Video'
+const types = {
+  [ VIDEO ]: getVideoById,
+}
+
+const getObjectById = ( type, id ) => compose(
+  option( null ),
+  ap( Maybe( { id } ) ),
+  prop( type )
+)(
+  types // a free variable in the global scope, better use Reader to inject the environment
+)
+
 module.exports = {
   getVideoById,
   getAllVideos,
   createVideo,
+  getObjectById,
 }
