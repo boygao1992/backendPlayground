@@ -1,5 +1,7 @@
 # GraphQL
 
+## References
+
 ### 1.[Tutorial: Designing a GraphQL API](https://gist.github.com/swalkinshaw/3a33e2d292b60e68fcebe12b62bbb3e2)
 
 ### 2.[GraphQL Tour: Interfaces and Unions](https://medium.com/the-graphqlhub/graphql-tour-interfaces-and-unions-7dd5be35de0d)
@@ -171,3 +173,33 @@ Assume `data` is an Object in global scope which represents a external database 
 `mutateAndGetPayload` sends an mutation IO to the server and receives a payload Object from the server.
 But after receiving the payload from the "server", namely `{ shipId, factionId }`, `outputFields` which postprocesses the payload accesses the server (`data`) again.
 Very likely an anti-pattern.
+
+### 7.[Todo example for koa-graphql and relay](https://github.com/chentsulin/koa-graphql-relay-example)
+
+## Tools
+
+### 1.[Apollo](https://www.apollographql.com/)
+
+> Apollo Client
+> The Query component uses the React render prop API (with a function as a child) to bind a query to our component and render it based on the results of our query.
+> cache for repeated query
+
+> Apollo Server
+
+### 2.[reindexio/reindex-api](https://github.com/reindexio/reindex-api)
+> reindex-api is a multi-tenant, hosted GraphQL database solution.
+> reindex-api converts a JSON based schema into a GraphQL API in addition to creating a database storage (MongoDB or RethinkDB) underneath. 
+
+
+
+## Language binding
+### 1.[elm-graphql](https://github.com/jamesmacaulay/elm-graphql)
+
+# Node
+
+## [PaperPlane](https://github.com/articulate/paperplane)
+> Lighter-than-air node.js server framework 
+> - pure, functional, Promise-based route handlers
+> - composeable json body parsing
+
+> con: currently no GraphQL middleware
