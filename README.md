@@ -203,3 +203,19 @@ Very likely an anti-pattern.
 > - composeable json body parsing
 
 > con: currently no GraphQL middleware
+
+# Purescript
+
+## Database
+
+### 1.[purescript-redis-client](https://pursuit.purescript.org/packages/purescript-redis-client/0.5.0)
+
+# Java
+
+## Spring
+
+## Database ORM
+
+### Hibernate
+
+### MyBatis
