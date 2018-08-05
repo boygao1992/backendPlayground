@@ -216,6 +216,76 @@ Very likely an anti-pattern.
 
 ## Database ORM
 
+### Object-Relational Mapping (ORM)
+
+#### The Paradigm Mismatch
+##### 1. abstraction granularity
+
+missing higher-level object abstraction in relational calculus
+
+> Classes in the Java domain model come in a range of different levels of granularity:
+> from coarse-grained entity classes like `User`, 
+> to finer-grained class like `Address`,
+> down to simple `SwissZipCode` extending `AbstractNumbericZipCode`.
+
+```elm
+type alias User =
+  { username : String
+  , address : Address
+  }
+  
+type alias Address =
+  { street : String
+  , zipcode : Zipcode
+  , city : String
+  }
+  
+type Zipcode
+  = NumericZipcode Int
+  | LiteralZipcode String
+  
+type alias SwissZipcode = NumericZipcode
+```
+
+> In the contrast, just two levels of type granularity are visible in the SQL database:
+> - relation type created by you, like `Users` and `BillingDetails`
+> - built-in data types, such as `VARCHAR`, `BIGINT`, `TIMESTAMP`
+
+> ```sql
+> create table USERS 
+>   ( Username VARCHAR(15) NOT NULL PRIMARY KEY
+>   , Address ADDRESS NOT NULL
+>   );
+> ```
+> A new `Address` type (class) in Java and a new `ADDRESS` SQL data type should guarantee interoperability.
+
+```sql
+create type ADDRESS as table
+    ( Street VARCHAR(255) NOT NULL
+    , Zipcode VARCHAR(5) NOT NULL
+    , City VARCHAR(255) NOT NULL
+    );
+```
+
+> User-defined data types (UDT) support is one of a number of so-called *object-relational extensions* to traditional SQL.
+> Unfortunately, UDT support is a somewhat obscure feature of mast SQL DBMSs and certainly isn't portable between different products.
+> Furthermore, the SQL standard supports UDT, but poorly.
+
+> The pragmatic solution for this problem has several columns of built-in vendor-defined SQL types:
+> ```sql
+> create table USERS 
+>   ( Username VARCHAR(15) NOT NULL PRIMARY KEY
+>   , Address_Street VARCHAR(255) NOT NULL
+>   , Address_Zipcode VARCHAR(5) NOT NULL
+>   , Address_City VARCHAR(255) NOT NULL
+>   );
+> ```
+
+##### 2. subtyping
+##### 3. identity
+##### 4. associations
+##### 5. data navigation
+
 ### Hibernate
 
 ### MyBatis
