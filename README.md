@@ -289,3 +289,21 @@ create type ADDRESS as table
 ### Hibernate
 
 ### MyBatis
+
+## HTTP
+
+### [Retrofit](https://github.com/square/retrofit)
+
+### [OkHttp](https://github.com/square/okhttp)
+
+# Kotlin
+
+## HTTP
+
+### [Fuel](https://github.com/kittinunf/Fuel)
+
+# Haskell
+
+## HTTP
+
+### [Network.HTTP](http://hackage.haskell.org/package/HTTP)
