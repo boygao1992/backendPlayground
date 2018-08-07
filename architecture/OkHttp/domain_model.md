@@ -60,17 +60,101 @@ getBody { body } = body
 
 ```
 
+# Response (class)
+`okhttp/src/main/java/okhttp3/Response`
+
+```elm
+
+type alias Response =
+  { request : Request
+  , protocol : Protocol
+  , code : Int
+  , message : String
+  , handshake : Maybe Handshake
+  , headers : Headers
+  , body : Maybe ResponseBody
+  , networkResponse : Maybe Response -- recursive definition
+  , cacheResponse : Maybe Response -- recursive definition
+  , priorResponse : Maybe Response -- recursive definition
+  , sentRequestAtMillis : Long
+  , receivedResponseAtMillis : Long
+  , cacheControl : CacheControl
+  }
+
+```
+
 # Interceptor (interface)
 `okhttp/src/main/java/okhttp3/Interceptor`
 
-```purescript
-class Chain a where
-  proceed :: Request -> Eff (http :: HTTP, exception :: EXCEPTION | eff) Response
+[Avoiding IO > 6.Custom monad type class](https://wiki.haskell.org/Avoiding_IO#Custom_monad_type_class)
 
-class Chain a <= Interceptor a where
-  intercept :: a -> Eff (http :: HTTP, exception :: EXCEPTION | eff) Response
+```purescript
+data Interceptor
+  = BridgeInterceptor { cookieJar : CookieJar }
+  | CacheInterceptor { cache : InternalCache }
+  | CallServerInterceptor { forWebSocket : Bool }
+  | ConnectInterceptor { client : OkHttpClient }
+
+data Chain = 
+  RealInterceptorChain
+    { interceptors : Interceptors
+    , index : Int
+    , request : Request
+    , streamAllocation : StreamAllocation
+    , httpCodec : HttpCodec
+    , connection : RealConnection
+    , call : Call
+    , eventListener : EventListener
+    , connectTimeout : Int
+    , readTimeout : Int
+    , writeTimeout : Int
+    , calls : Int
+    }
+    
+
+intercept :: Interceptor -> Chain -> Eff (http :: HTTP, exception :: EXCEPTION | eff) Response
+intercept interceptor chain =
+  case interceptor of
+    BridgeInterceptor { cookieJar } -> 
+      let
+        { request } = chain
+      in 
+        bridgeIntercept cookieJar request
+      
+    CacheInterceptor { cache } ->
+      let
+        { request } = chain
+      in
+        cacheIntercept cache request
+
+    CallServerInterpretor { forWebSocket } ->
+      callServerInterpret forWebSocket chain
+        
+    ConnectInterceptor { client } ->
+      let
+        { connectTimeout, readTimeout, writeTimeout } = chain
+      connectIntercept client connectTimeout readTimeout writeTimeout
+
+
+proceed :: Request -> StreamAllocation -> HttpCodec -> RealConnection -> Eff (http :: HTTP, exception :: EXCEPTION | eff) Response
+
 ```
 
-direct(rough) translation from `interface` to `type class`, anti-pattern
 
-[Avoiding IO > 6.Custom monad type class](https://wiki.haskell.org/Avoiding_IO#Custom_monad_type_class)
+# OkHttpClient (class)
+
+> OkHttpClients should be shared.
+> each client holds its own connection pool and thread pools.
+> Reusing connections and threads reduces latency and saves memory.
+
+
+# Global Comments
+
+Certainly, it's not following "single source of truth" principle.
+Copying is everywhere.
+
+Builder (`Request.Builder`, `Respond.Builder`) can be implemented as an Applicative validator (validation logic for each field) wrapping a higher-order constructor function.
+This way, validation logic can be modulized and reused.
+Error handling would be way cleaner without throwing exceptions everywhere.
+
+Missing Union type in Java forces programmer to manually trim down a power set to one of its subset by conditionals without any guarantee from the compiler.
