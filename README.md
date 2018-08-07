@@ -304,6 +304,9 @@ create type ADDRESS as table
 
 # Haskell
 
-## HTTP
+## Network
+
+### [Network.URI](http://hackage.haskell.org/package/network-uri)
 
 ### [Network.HTTP](http://hackage.haskell.org/package/HTTP)
+
