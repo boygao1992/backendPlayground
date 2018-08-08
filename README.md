@@ -282,9 +282,50 @@ create type ADDRESS as table
 > ```
 
 ##### 2. subtyping
+
+common fields in the superclass
+
+> Each of these subclasses defines slightly different data (and completely differnt functionality that acts on that data).
+
+regardless of attached methods, this is a typical use case of Union type
+
+> This is a polymorphic association.
+> Similarly, you want to be able to write polymorphic queries, and have the query return instances of its subclasses.
+> SQL databases lack an obvious way ( or at least a standardized way) to represent a polymorphic association.
+
 ##### 3. identity
+> Java defines two different notions of sameness:
+> - Instance identity (equality by reference)
+> - Instance equality (equality by value)
+
+> the identity of a database row is expressed as a comparison of primary key values.
+
+> It's common for several non-identical instances in Java to simultaneously represent the same row of the database.
+> for example, in concurrently running application threads.
+
+unified by system-generated global identity
+
 ##### 4. associations
+> The challenge is to map a completely open data model, which is independent of the application that works with the data, to an application-dependent navigational model.
+> a constrained view of the associations needed by this particular application.
+
+
+> Object-oriented languages represent associations using object references
+> - directional
+> - can have many-to-many multiplicity
+
+> in the relational world, a foreign key-constrained column represents an association, with copies of key values.
+> - The constraint is a rule that guarantees integrity of the association.
+> - many-to-one association
+
+use an extra link table between two entities to represent many-to-many association
+
 ##### 5. data navigation
+
+> walking the object network
+> lazy loading
+
+> minimize the number of queries to the database
 
 ### Hibernate
 
@@ -303,6 +344,16 @@ create type ADDRESS as table
 ### [Fuel](https://github.com/kittinunf/Fuel)
 
 # Haskell
+
+## Database
+
+### [Persistent](http://hackage.haskell.org/package/persistent)
+
+[Persistent :: Yesod Web Framework Book- Version 1.6](https://www.yesodweb.com/book/persistent)
+
+### [Groundhog](http://hackage.haskell.org/package/groundhog)
+
+[Working with databases using Groundhog - School of Haskell](https://www.schoolofhaskell.com/user/lykahb/groundhog)
 
 ## Network
 
