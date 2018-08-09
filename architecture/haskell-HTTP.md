@@ -4,7 +4,7 @@
 
 Basic division
 - HTTP
-  - Headers
+ - Headers
   - Base
   - HandleStream
 - TCP

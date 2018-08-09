@@ -361,3 +361,7 @@ use an extra link table between two entities to represent many-to-many associati
 
 ### [Network.HTTP](http://hackage.haskell.org/package/HTTP)
 
+
+# Actor-based Concurrent System
+
+## Akka (Scala/Java)
