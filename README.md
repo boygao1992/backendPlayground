@@ -337,6 +337,11 @@ use an extra link table between two entities to represent many-to-many associati
 
 ### [OkHttp](https://github.com/square/okhttp)
 
+
+## Database Middleware
+
+### [Sharding Sphere](https://github.com/sharding-sphere/sharding-sphere)
+
 # Kotlin
 
 ## HTTP
@@ -344,6 +349,8 @@ use an extra link table between two entities to represent many-to-many associati
 ### [Fuel](https://github.com/kittinunf/Fuel)
 
 # Haskell
+
+[Simon Meier / The Service Pattern](https://www.schoolofhaskell.com/user/meiersi/the-service-pattern)
 
 ## Database
 
@@ -365,3 +372,8 @@ use an extra link table between two entities to represent many-to-many associati
 # Actor-based Concurrent System
 
 ## Akka (Scala/Java)
+
+## Scala Actor
+
+## Erlang Actor
+
