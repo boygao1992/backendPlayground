@@ -354,9 +354,16 @@ use an extra link table between two entities to represent many-to-many associati
 
 ## Database
 
+### [Beam](https://tathougies.github.io/beam/)
+> No Template Haskell
+
 ### [Persistent](http://hackage.haskell.org/package/persistent)
+> Template Haskell
 
 [Persistent :: Yesod Web Framework Book- Version 1.6](https://www.yesodweb.com/book/persistent)
+
+### [esqueleto](http://hackage.haskell.org/package/esqueleto)
+> Template Haskell
 
 ### [Groundhog](http://hackage.haskell.org/package/groundhog)
 
@@ -367,6 +374,145 @@ use an extra link table between two entities to represent many-to-many associati
 ### [Network.URI](http://hackage.haskell.org/package/network-uri)
 
 ### [Network.HTTP](http://hackage.haskell.org/package/HTTP)
+
+## JSON
+
+### [aeson](http://hackage.haskell.org/package/aeson)
+
+[aeson-lens: Lens of Aeson](http://hackage.haskell.org/package/aeson-lens)
+
+[overloaded string literal - school of Haskell](https://www.schoolofhaskell.com/user/kseo/overloaded-string-literals)
+```haskell
+class IsString a where
+    fromString :: String -> a
+
+-- String, ByteString and Text are examples of IsString instances
+
+{-# LANGUAGE OverloadedStrings #-}
+a :: String
+a = "Hello World"
+
+b :: ByteString
+b = "Hello World"
+
+c :: Text
+c = "Hello World"
+```
+
+> derive instances of `ToJSON` and `FromJSON` from derived instances of `Generic` type class
+```haskell
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE DeriveAnyClass    #-}
+
+data Person = Person
+  { name :: String
+  , age :: Int
+  , occupation :: Occupation
+  } deriving (Show, Generic, ToJSON, FromJSON)
+
+data Occupation = Occupation
+  { title :: String
+  , tenure :: Int
+  , salary :: Int
+  } deriving (Show, Generic, ToJSON, FromJSON)
+```
+
+> generate instances of `ToJSON` and `FromJSON` by Template Haskell
+```haskell
+{-# LANGUAGE TemplateHaskell #-}
+
+import Data.Aeson.TH (deriveJSON, defaultOptions)
+-- The two apostrophes before a type name is template haskell syntax
+deriveJSON defaultOptions ''Occupation
+deriveJSON defaultOptions ''Person
+
+deriveJSON
+  (defaultOptions { fieldLabelModifier = ("occupation_" ++) })
+  ''Occupation
+deriveJSON
+  (defaultOptions { fieldLabelModifier = ("person_" ++)})
+  ''Person
+```
+
+> manually define instances of `ToJSON` and `FromJSON` for each data-type
+```haskell
+{-# LANGUAGE OverloadedStrings #-}
+
+import Data.Aeson (ToJSON(..), Value(..), object, (.=), (.:), FromJSON(..), withObject)
+
+instance ToJSON Occupation where
+  toJSON :: Occupation -> Value
+  toJSON occupation = object
+    [ “title” .= toJSON (title occupation)
+    , “tenure” .= toJSON (tenure occupation)
+    , “salary” .= toJSON (salary occupation)
+    ]
+
+instance ToJSON Person where
+  toJSON person = object
+    [ “name” .= toJSON (name person)
+    , “age” .= toJSON (age person)
+    , “occupation” .= toJSON (occupation person)
+    ]
+
+instance FromJSON Occupation where
+  parseJSON = withObject “Occupation” $ \o -> do
+    title_ <- o .: “title”
+    tenure_ <- o .: “tenure”
+    salary_ <- o .: “salary”
+    return $ Occupation title_ tenure_ salary_
+
+instance FromJSON Person where
+  parseJSON = withObject “Person” $ \o -> do
+    name_ <- o .: “name”
+    age_ <- o .: “age”
+    occupation_ <- o .: “occupation”
+    return $ Person name_ age_ occupation_
+
+```
+
+#### library spec
+```haskell
+-- | A JSON \"object\" (key\/value map).
+type Object = HashMap Text Value
+
+-- | A JSON \"array\" (sequence).
+type Array = Vector Value
+
+-- | A JSON value represented as a Haskell value.
+data Value = Object !Object
+           | Array !Array
+           | String !Text
+           | Number !Number
+           | Bool !Bool
+           | Null
+             deriving (Eq, Show, Typeable)
+
+class ToJSON a where
+  toJSON :: a -> Value
+  
+class FromJSON a where
+  parseJSON :: Value -> Parser a
+
+encode :: ToJSON a => a -> ByteString
+decode :: FromJSON a => ByteString -> Maybe a
+eitherDecode :: FromJSON a => ByteString -> Either String a
+
+
+-- | The result of running a 'Parser'.
+data Result a = Error String
+              | Success a
+                deriving (Eq, Show, Typeable)  
+-- | Run a 'Parser'.
+parse :: (a -> Parser b) -> a -> Result b
+parse m v = runParser (m v) Error Success
+
+-- A newtype wrapper for UTCTime that uses the same non-standard serialization format as Microsoft .NET
+-- The number represents milliseconds since the Unix epoch.
+newtype DotNetTime = DotNetTime {
+      fromDotNetTime :: UTCTime
+    } deriving (Eq, Ord, Read, Show, Typeable, FormatTime)
+```
 
 
 # Actor-based Concurrent System
