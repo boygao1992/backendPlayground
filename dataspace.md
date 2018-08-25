@@ -1,5 +1,19 @@
 [Dataspace/Fabric - Nate Cull](http://natecull.org/wordpress/category/dataspace/)
 
+# Dataspace 0: Those Memex Dreams Again
+
+>Computing in the Internet age has a number of inspiring visions: legendary systems, some of which got built, some of which remained hypothetical, “dream machines”. Among them are: 
+> - Vannevar Bush’s Memex (1945).
+> - Ted Nelsen’s Xanadu (1960).
+
+[The Curse of Xanadu](https://www.wired.com/1995/06/xanadu/)
+
+[Computer Lib/Dream Machines - Ted Nelson](https://www.amazon.com/Computer-Lib-Dream-Machines-Revised/dp/0914845497/ref=sr_1_2?ie=UTF8&qid=1535213932&sr=8-2&keywords=ted+nelson)
+
+> - J R Licklider’s Intergalactic Computer Network (1963).
+> - Douglas Engelbart’s NLS (1968) and Alan Kay’s Dynabook (also 1968).
+> - William Gibson’s Cyberspace (1982).
+
 > We currently have an Internet made of vast layers of complexity layered on each other;
 > software layers going back to the 1960s at the very latest, built on traditions and workflows originated in the 1950s.
 >
@@ -35,7 +49,11 @@
 an improved object model (?)
 
 - has a solid mathematical foundation like Relational Algebra to relational database
-- loosely typed, as less assumption about the structure of the data as possible, can be later elaborated by users
+- loosely typed, as less number of assumptions about the structures of the data as possible, can be later elaborated by users
 - has a notion of computation (data transformation) without side effects, pure and self-contained
 - able to store large collections of small and irregular pieces of data
 - well-defined standard/formats for serialization and deserialization of data for communication between systems
+
+# Dataspace 1: In Search of a Data Model
+
+

@@ -514,6 +514,22 @@ newtype DotNetTime = DotNetTime {
     } deriving (Eq, Ord, Read, Show, Typeable, FormatTime)
 ```
 
+### [purescript-bridge: Generate PureScript data types from Haskell data types](http://hackage.haskell.org/package/purescript-bridge)
+
+[Connecting a Haskell Backend to a PureScript Frontend](https://www.stackbuilders.com/tutorials/functional-full-stack/purescript-bridge/)
+
+[javcasas/purescript-bridge-tutorial](https://github.com/javcasas/purescript-bridge-tutorial)
+
+## Web Server
+
+### [servant – A Type-Level Web DSL](https://haskell-servant.readthedocs.io/en/stable/)
+> taking as input a description of the web API as a Haskell type.
+encode the structure of a Restful API into Type
+> Servant is then able to
+> - check that your server-side request handlers indeed implement your web API faithfully,
+> - automatically derive Haskell functions that can hit a web application that implements this API,
+> - generate a Swagger description or code for client functions in some other languages directly.
+
 
 # Actor-based Concurrent System
 
