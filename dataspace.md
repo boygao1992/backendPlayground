@@ -195,6 +195,7 @@ nesting relations is not a problem,
 actually it's the only one good thing done right by RDF as a graph database
 
 > A third problem which might be so huge it’s not even registering on our radar: triples (or Codd relations generally) don’t have a programming model associated with them. They’re purely a data storage model.
+
 not sure why this is a problem
 and in reality, Semantic Web is designed around first-order predicate logic which is the "programming model"
 I guess the author doesn't take logic programming as a legit form of programming for general purposes
@@ -209,3 +210,5 @@ predicateA :: forall a b. a -> b
 in which type `a` and type `b` can be shaped by logical constraints like in dependent type systems
 
 to refer to an edge instance (in order to build higher-order statements/functions), need to use cumbersome reification mechanism
+
+# Dataspace 2: Revenge of the Data Model

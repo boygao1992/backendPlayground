@@ -522,6 +522,11 @@ newtype DotNetTime = DotNetTime {
 
 ## Web Server
 
+### [wai: Web Application Interface.](http://hackage.haskell.org/package/wai)
+> Provides a common protocol for communication between web applications and web servers.
+
+[wai-extra: Provides some basic WAI handlers and middleware.](http://hackage.haskell.org/package/wai-extra)
+
 ### [servant – A Type-Level Web DSL](https://haskell-servant.readthedocs.io/en/stable/)
 > taking as input a description of the web API as a Haskell type.
 encode the structure of a Restful API into Type
@@ -531,6 +536,15 @@ encode the structure of a Restful API into Type
 > - generate a Swagger description or code for client functions in some other languages directly.
 
 
+### [warp: A fast, light-weight web server for WAI applications.](http://hackage.haskell.org/package/warp)
+
+### [Yesod](https://www.yesodweb.com/)
+Declaration of routes through DSL and Template Haskell
+
+### [Happstack](http://hackage.haskell.org/package/happstack-server)
+
+### [Snap](http://snapframework.com/)
+
 # Actor-based Concurrent System
 
 ## Akka (Scala/Java)
@@ -539,3 +553,9 @@ encode the structure of a Restful API into Type
 
 ## Erlang Actor
 
+
+# Scala
+
+## HTTP
+
+### [spray](http://spray.io/)
