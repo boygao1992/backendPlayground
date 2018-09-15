@@ -342,6 +342,14 @@ use an extra link table between two entities to represent many-to-many associati
 
 ### [Sharding Sphere](https://github.com/sharding-sphere/sharding-sphere)
 
+## Web Framework
+
+### [Play](https://www.playframework.com/)
+
+### [Spring MVC / WebFlux](https://spring.io/)
+> SpringMVC: synchronous, one-request-per-thread
+> WebFlux: concurrent; ReactorStream(RxJava), Netty
+
 # Kotlin
 
 ## HTTP
@@ -559,3 +567,7 @@ Declaration of routes through DSL and Template Haskell
 ## HTTP
 
 ### [spray](http://spray.io/)
+
+## Web Framework
+
+### [Play](https://www.playframework.com/)
