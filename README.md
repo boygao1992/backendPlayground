@@ -197,12 +197,33 @@ Very likely an anti-pattern.
 
 # Node
 
-## [PaperPlane](https://github.com/articulate/paperplane)
+## ORM
+
+### [loopback/Model](https://loopback.io/doc/en/lb4/Model.html)
+
+### [Sequelize](https://github.com/sequelize/sequelize)
+
+[flow-typed/sequelize_v4.x.x](https://github.com/flow-typed/flow-typed/tree/master/definitions/npm/sequelize_v4.x.x)
+
+[graphql-sequelize](https://github.com/mickhansen/graphql-sequelize)
+
+### [Objection.js](https://github.com/Vincit/objection.js/)
+
+[objection-graphql](https://github.com/Vincit/objection-graphql)
+
+### [Postgraphile](https://github.com/graphile/postgraphile)
+
+## Web Framework
+
+### [PaperPlane](https://github.com/articulate/paperplane)
 > Lighter-than-air node.js server framework 
 > - pure, functional, Promise-based route handlers
 > - composeable json body parsing
 
-> con: currently no GraphQL middleware
+con: currently no GraphQL middleware
+
+### [Loopback](https://github.com/strongloop/loopback)
+
 
 # Purescript
 
@@ -571,3 +592,21 @@ Declaration of routes through DSL and Template Haskell
 ## Web Framework
 
 ### [Play](https://www.playframework.com/)
+
+# Ruby
+
+## ORM
+
+### [Rails/ActiveRecord](https://github.com/rails/rails/tree/master/activerecord)
+
+### [Sequel](https://github.com/jeremyevans/sequel)
+
+# Elixir
+
+## ORM
+
+### [Phoenix/Ecto](https://github.com/elixir-ecto/ecto)
+
+## Web Framework
+
+### [Phoenix](https://github.com/phoenixframework/phoenix)
