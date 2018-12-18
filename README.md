@@ -1,5 +1,37 @@
 # GraphQL
 
+## [PureScript-GraphQL](https://github.com/hendrikniemann/purescript-graphql)
+
+issues
+1. if all resolvers of a child `ObjectType` don't require context, we can leave `ctx :: Type` as a universally quantified Type variable (`forall ctx.`)
+  - but currently, this would raise a compiler `TypeError` because type class constraint `ObjectType ctx a =>` enforces all child `ObjectType` bounded by the same existential `ctx :: Type`
+
+improvement plan
+- use `Generic` representation of ADTs to automatically derive `GraphQLType`
+  - Required/Optional
+    - by default, all fields are required/non-null
+      - `nonNull <<< _`
+    - `Maybe` -> `Nullable`
+  - `ScalarType`
+    - `Int` -> `GraphQLInt`
+    - `Number` -> `GraphQLFloat`
+    - `String` -> `GraphQLString`
+    - `Boolean` -> `GraphQLBoolean`
+    - `GraphQLID` ?
+      - `newtype ID = ID String`
+      - extra configuration, takes a `Symbol` as the field name for ID
+  - `Array` -> `ListType`
+  - `Sum` -> `GraphQLUnionType`
+    - `Sum` Type where all the constructors are nullary -> `GraphQLEnumType`
+  - `GraphQLInterfaceType`
+    - not necessary with PureScript's type system
+  - `Record` -> `GraphQLObjectType` or `GraphQLInputObjectType`
+    - derive constructor to
+      - distinguish `GraphQLObjectType` from `GraphQLInputObjectType`
+      - further inject (optional) descriptions and resolvers
+- mapping from Fold (auto-derivable from Haskell Lense) to GraphQL query tree
+## [graphql-api - Haskell](http://hackage.haskell.org/package/graphql-api-0.1.1)
+
 ## References
 
 ### 1.[Tutorial: Designing a GraphQL API](https://gist.github.com/swalkinshaw/3a33e2d292b60e68fcebe12b62bbb3e2)
@@ -230,6 +262,12 @@ con: currently no GraphQL middleware
 ## Database
 
 ### 1.[purescript-redis-client](https://pursuit.purescript.org/packages/purescript-redis-client/0.5.0)
+
+## Web Server (API only)
+
+### 1.[Purescript-Express](https://github.com/nkly/purescript-express)
+
+### 2.[HTTPure](https://github.com/cprussin/purescript-httpure)
 
 # Java
 
