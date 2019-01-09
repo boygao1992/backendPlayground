@@ -1,5 +1,49 @@
 # GraphQL
 
+## [[RFC] GraphQL Input Union type](https://github.com/facebook/graphql/issues/488)
+
+so far, we can only simulate Input Union type by InputObjectType with all fields left optional
+
+adapted from [purescript-graphql-example](https://github.com/hendrikniemann/purescript-graphql-example)
+
+```purescript
+data PostAction
+  = PostUpdateTitle { title :: String }
+  | PostUpdateContent { content :: String }
+```
+is encoded as
+```purescript
+newtype PostAction = PostAction
+  { updateTitle :: Maybe PostUpdateTitle
+  , updateContent :: Maybe PostUpdateContent
+  }
+newtype PostUpdateTitle = PostUpdateTitle { title :: String }
+newtype PostUpdateContent = PostUpdateContent { content :: String }
+
+```
+and need an explicit translator to enforce mutual exclusion constraint
+```purescript
+toPostAction :: PostActionObject -> Maybe PostAction
+toPostAction { updateTitle, updateContent } = case updateTitle, updateContent of
+  Just arg, Nothing -> Just (PostUpdateTitle arg)
+  Nothing, Just arg -> Just (PostUpdateContent arg)
+  _, _ -> Nothing
+```
+which describes the following mapping
+```purescript
+-- | case 1
+{ updateTitle : Just { title }
+, updateContent : Nothing
+}
+-> PostUpdateTitle { title }
+
+-- | case 2
+{ updateTitle : Nothing
+, updateContent : Just { content }
+}
+-> PostUpdateContent { content }
+```
+
 ## [PureScript-GraphQL](https://github.com/hendrikniemann/purescript-graphql)
 
 issues
@@ -30,6 +74,7 @@ improvement plan
       - distinguish `GraphQLObjectType` from `GraphQLInputObjectType`
       - further inject (optional) descriptions and resolvers
 - mapping from Fold (auto-derivable from Haskell Lense) to GraphQL query tree
+
 ## [graphql-api - Haskell](http://hackage.haskell.org/package/graphql-api-0.1.1)
 
 ## References
@@ -268,6 +313,8 @@ con: currently no GraphQL middleware
 ### 1.[Purescript-Express](https://github.com/nkly/purescript-express)
 
 ### 2.[HTTPure](https://github.com/cprussin/purescript-httpure)
+
+### 3.[Hyper](https://github.com/owickstrom/hyper)
 
 # Java
 
