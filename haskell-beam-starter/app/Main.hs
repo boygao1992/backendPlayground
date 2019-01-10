@@ -1,25 +1,22 @@
-{-# LANGUAGE
-DeriveGeneric,
-GADTs,
-OverloadedStrings,
-FlexibleContexts,
-FlexibleInstances,
-TypeFamilies,
-TypeApplications,
-StandaloneDeriving,
-TypeSynonymInstances,
-MultiParamTypeClasses,
-PartialTypeSignatures
-#-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE GADTs                 #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE PartialTypeSignatures #-}
+{-# LANGUAGE StandaloneDeriving    #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE TypeSynonymInstances  #-}
 
 module Main where
 
-import Prelude
-import Database.Beam
-import Database.Beam.Sqlite
-import Database.SQLite.Simple
+import           Database.Beam
+import           Database.Beam.Sqlite
+import           Database.SQLite.Simple
+import           Prelude
 
-import Data.Text (Text)
+import           Data.Text              (Text)
 
 {- |
 type family Columnar (f :: * -> *) x where ...
@@ -35,10 +32,10 @@ Equations
 -- Tables
 data UserT f
   = User
-  { _userEmail :: Columnar f Text
+  { _userEmail     :: Columnar f Text
   , _userFirstName :: Columnar f Text
-  , _userLastName :: Columnar f Text
-  , _userPassword :: Columnar f Text
+  , _userLastName  :: Columnar f Text
+  , _userPassword  :: Columnar f Text
   }
   deriving Generic
 instance Beamable UserT
@@ -52,7 +49,7 @@ instance Table UserT where
   primaryKey = UserId . _userEmail
 instance Beamable (PrimaryKey UserT)
 
-data ShoppingCartDb f
+newtype ShoppingCartDb f
   = ShoppingCartDb
   { _shoppingCartUsers :: f (TableEntity UserT)
   }
@@ -78,7 +75,7 @@ main = do
   let allUsers = all_ (_shoppingCartUsers shoppingCartDb)
   runBeamSqliteDebug putStrLn connection $ do
     users <- runSelectReturningList $ select allUsers
-    mapM_ (liftIO . putStrLn . show) users
+    mapM_ (liftIO . print) users
 
   let sortUsersByFirstName =
         orderBy_
@@ -90,7 +87,7 @@ main = do
           (all_ (_shoppingCartUsers shoppingCartDb))
   runBeamSqliteDebug putStrLn connection $ do
     users <- runSelectReturningList $ select sortUsersByFirstName
-    mapM_ (liftIO . putStrLn . show) users
+    mapM_ (liftIO . print) users
 
   let boundedQuery :: Q SqliteSelectSyntax _ _ _
       boundedQuery =
@@ -100,6 +97,4 @@ main = do
         $ all_ (_shoppingCartUsers shoppingCartDb)
   runBeamSqliteDebug putStrLn connection $ do
     users <- runSelectReturningList (select boundedQuery :: SqlSelect SqliteSelectSyntax _)
-    mapM_ (liftIO . putStrLn . show) users
-
-
+    mapM_ (liftIO . print) users
