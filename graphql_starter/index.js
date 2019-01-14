@@ -30,6 +30,7 @@ const {
 
 const G = {
   schema: x => new GraphQLSchema( x ),
+  nonNull: x => new GraphQLNonNull( x ),
   object: x => new GraphQLObjectType( x ),
   list: x => new GraphQLList( x ),
   input: x => new GraphQLInputObjectType( x ),
@@ -169,6 +170,159 @@ const { connectionType: VideoConnection } = connectionDefinitions( {
   } )
 } )
 
+// const UserType = G.object( {
+//   name: "User",
+//   description: ".",
+//   fields: _ => ({
+//     id: {
+//       type: G.nonNull(G.id),
+//       description: ".",
+//     },
+//     post: {
+//       type: PostType, // NOTE reference to PostType
+//       description: ".",
+//       resolve: source => new Promise(res => res({ id: "post_" + source.id }))
+//     }
+//   })
+// })
+
+// const PostType = G.object( {
+//   name: "Post",
+//   description: ".",
+//   fields: _ => ({
+//     id: {
+//       type: G.nonNull(G.id),
+//       description: "."
+//     },
+//     author: {
+//       type: UserType, // NOTE reference to UserType
+//       description: ".",
+//       resolve: source => new Promise(res => res({ id: "user_" + source.id }))
+//     }
+//   })
+// })
+
+/* query
+
+query {
+  user(id: 1) {
+    id
+    post {
+      id
+      author {
+        id
+        post {
+          id
+          author {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+/* response
+
+{
+  "data": {
+    "user": {
+      "id": "user_1",
+      "post": {
+        "id": "post_user_1",
+        "author": {
+          "id": "user_post_user_1",
+          "post": {
+            "id": "post_user_post_user_1",
+            "author": {
+              "id": "user_post_user_post_user_1"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+const unRef = ref => ref.value
+
+const userTypeConstructor = postTypeRef => commentTypeRef => G.object( {
+  name: "User",
+  description: ".",
+  fields: _ => ({
+    id: {
+      type: G.nonNull(G.id),
+      description: ".",
+    },
+    posts: {
+      type: G.nonNull(G.list(unRef(postTypeRef))),
+      description: ".",
+      resolve: source => new Promise(res => res([{ id: "post_" + source.id }]))
+    },
+    comments: {
+      type: G.nonNull(G.list(unRef(commentTypeRef))),
+      description: ".",
+      resolve: source => new Promise(res => res([{ id: "comment_" + source.id }]))
+    }
+  })
+})
+
+const postTypeConstructor = userTypeRef => commentTypeRef => G.object( {
+  name: "Post",
+  description: ".",
+  fields: _ => ({
+    id: {
+      type: G.nonNull(G.id),
+      description: "."
+    },
+    author: {
+      type: G.nonNull(unRef(userTypeRef)),
+      description: ".",
+      resolve: source => new Promise(res => res({ id: "user_" + source.id }))
+    },
+    comments: {
+      type: G.nonNull(G.list(unRef(commentTypeRef))),
+      description: ".",
+      resolve: source => new Promise(res => res([{ id: "comment_" + source.id }]))
+    }
+  })
+})
+
+const commentTypeConstructor = userTypeRef => postTypeRef => G.object({
+  name: "Comment",
+  description: ".",
+  fields: _ => ({
+    id: {
+      type: G.nonNull(G.id),
+      description: "."
+    },
+    post: {
+      type: G.nonNull(unRef(postTypeRef)),
+      description: ".",
+      resolve: source => new Promise(res => res({ id: "post_" + source.id }))
+    },
+    author: {
+      type: G.nonNull(unRef(userTypeRef)),
+      description: ".",
+      resolve: source => new Promise(res => res({ id: "user_" + source.id }))
+    }
+  })
+})
+
+let userTypeRef = { value: null }
+let postTypeRef = { value: null }
+let commentTypeRef = { value: null }
+
+userTypeRef.value = userTypeConstructor(postTypeRef)(commentTypeRef)
+postTypeRef.value = postTypeConstructor(userTypeRef)(commentTypeRef)
+commentTypeRef.value = commentTypeConstructor(userTypeRef)(postTypeRef)
+
+const UserType = userTypeRef.value
+const PostType = postTypeRef.value
+const CommentType = commentTypeRef.value
+
 const QueryType = G.object( {
   name: 'QueryType',
   description: 'The root query type',
@@ -185,7 +339,6 @@ const QueryType = G.object( {
       },
       resolve: ( _, args ) => getVideoById( args )
     },
-
     videos: {
       type: VideoConnection,
       args: connectionArgs,
@@ -194,9 +347,81 @@ const QueryType = G.object( {
         args
       )
     },
+    user: {
+      type: UserType,
+      args: {
+        id: {
+          type: G.nonNull(G.id)
+        }
+      },
+      resolve: (_, { id }) => new Promise( res => res({ id: "user_" + id }) )
+    },
+    post: {
+      type: PostType,
+      args: {
+        id: {
+          type: G.nonNull(G.id)
+        }
+      },
+      resolve: (_, { id }) => new Promise( res => res({ id: "post_" + id }))
+    },
+    comment: {
+      type: CommentType,
+      args: {
+        id: {
+          type: G.nonNull(G.id)
+        }
+      },
+      resolve: (_, { id }) => new Promise( res => res({ id: "comment_" + id }))
+    }
   }
 } )
-
+/* query
+query {
+  user(id: "001") {
+    id
+    posts {
+      id
+      comments {
+        id
+        author {
+          id
+          comments {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+*/
+/* response
+{
+  "data": {
+    "user": {
+      "id": "user_001",
+      "posts": [
+        {
+          "id": "post_user_001",
+          "comments": [
+            {
+              "id": "comment_post_user_001",
+              "author": {
+                "id": "user_comment_post_user_001",
+                "comments": [
+                  {
+                    "id": "comment_user_comment_post_user_001"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+*/
 const VideoInputType = G.input( {
   name: 'VideoInput',
   fields: {
@@ -314,3 +539,4 @@ server.listen( PORT, _ => {
 // graphql( schema, query, resolvers )
 //   .then( x => console.log( inspect( x, { depth: 4, colors: true } ) ) )
 //   .catch( console.log )
+
