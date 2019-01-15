@@ -246,9 +246,7 @@ query {
 }
 */
 
-const unRef = ref => ref.value
-
-const userTypeConstructor = postTypeRef => commentTypeRef => G.object( {
+const userTypeConstructor = dependencies => G.object( {
   name: "User",
   description: ".",
   fields: _ => ({
@@ -257,19 +255,19 @@ const userTypeConstructor = postTypeRef => commentTypeRef => G.object( {
       description: ".",
     },
     posts: {
-      type: G.nonNull(G.list(unRef(postTypeRef))),
+      type: G.nonNull(G.list(dependencies.PostType)),
       description: ".",
       resolve: source => new Promise(res => res([{ id: "post_" + source.id }]))
     },
     comments: {
-      type: G.nonNull(G.list(unRef(commentTypeRef))),
+      type: G.nonNull(G.list(dependencies.CommentType)),
       description: ".",
       resolve: source => new Promise(res => res([{ id: "comment_" + source.id }]))
     }
   })
 })
 
-const postTypeConstructor = userTypeRef => commentTypeRef => G.object( {
+const postTypeConstructor = dependencies => G.object( {
   name: "Post",
   description: ".",
   fields: _ => ({
@@ -278,19 +276,19 @@ const postTypeConstructor = userTypeRef => commentTypeRef => G.object( {
       description: "."
     },
     author: {
-      type: G.nonNull(unRef(userTypeRef)),
+      type: G.nonNull(dependencies.UserType),
       description: ".",
       resolve: source => new Promise(res => res({ id: "user_" + source.id }))
     },
     comments: {
-      type: G.nonNull(G.list(unRef(commentTypeRef))),
+      type: G.nonNull(G.list(dependencies.CommentType)),
       description: ".",
       resolve: source => new Promise(res => res([{ id: "comment_" + source.id }]))
     }
   })
 })
 
-const commentTypeConstructor = userTypeRef => postTypeRef => G.object({
+const commentTypeConstructor = dependencies => G.object({
   name: "Comment",
   description: ".",
   fields: _ => ({
@@ -299,29 +297,25 @@ const commentTypeConstructor = userTypeRef => postTypeRef => G.object({
       description: "."
     },
     post: {
-      type: G.nonNull(unRef(postTypeRef)),
+      type: G.nonNull(dependencies.PostType),
       description: ".",
       resolve: source => new Promise(res => res({ id: "post_" + source.id }))
     },
     author: {
-      type: G.nonNull(unRef(userTypeRef)),
+      type: G.nonNull(dependencies.UserType),
       description: ".",
       resolve: source => new Promise(res => res({ id: "user_" + source.id }))
     }
   })
 })
 
-let userTypeRef = { value: null }
-let postTypeRef = { value: null }
-let commentTypeRef = { value: null }
+let ST = {}
 
-userTypeRef.value = userTypeConstructor(postTypeRef)(commentTypeRef)
-postTypeRef.value = postTypeConstructor(userTypeRef)(commentTypeRef)
-commentTypeRef.value = commentTypeConstructor(userTypeRef)(postTypeRef)
+ST.UserType = userTypeConstructor(ST)
+ST.PostType = postTypeConstructor(ST)
+ST.CommentType = commentTypeConstructor(ST)
 
-const UserType = userTypeRef.value
-const PostType = postTypeRef.value
-const CommentType = commentTypeRef.value
+const { UserType, PostType, CommentType } = ST
 
 const QueryType = G.object( {
   name: 'QueryType',
