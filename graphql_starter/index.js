@@ -170,6 +170,153 @@ const { connectionType: VideoConnection } = connectionDefinitions( {
   } )
 } )
 
+// const AuthorInputType = G.input({
+//   name: "AuthorInputType",
+//   fields: {
+//     id: {
+//       type: G.id
+//     },
+//     name: {
+//       type: G.string
+//     }
+//   }
+// })
+
+// const PostDraftContentTodoInputType = G.input({
+//   name: "PostDraftContentTodoInputType",
+//   fields: {
+//     id: {
+//       type: G.id
+//     },
+//     todo: {
+//       type: G.string
+//     }
+//   }
+// })
+
+// const PostDraftContentInputType = G.input ({
+//   name: "PostDraftContentInputType",
+//   fields: _ => ({ // NOTE allow recursive input type
+//     date: {
+//       type: G.string
+//     },
+//     lines: {
+//       type: G.int
+//     },
+//     todolist: {
+//       type: G.nonNull(G.list(G.nonNull(PostDraftContentTodoInputType)))
+//     },
+//     // NOTE recursive input type
+//     c: {
+//       type: PostDraftContentInputType
+//     }
+//   })
+// })
+
+// const PostDraftInputType = G.input ({
+//   name: "PostDraftInputType",
+//   fields: {
+//     author: {
+//       type: AuthorInputType
+//     },
+//     content: {
+//       type: PostDraftContentInputType
+//     }
+//   }
+// })
+
+const PostDraftInputType = G.input ({
+  name: "PostDraft",
+  fields: {
+    author: {
+      type: G.input({
+        name: "PostDraft_author",
+        fields: {
+          id: {
+            type: G.id
+          },
+          name: {
+            type: G.string
+          }
+        }
+      })
+    },
+    content: {
+      type: G.input ({
+        name: "PostDraft_content",
+        fields: {
+          date: {
+            type: G.string
+          },
+          lines: {
+            type: G.int
+          },
+          todolist: {
+            type: G.nonNull(G.list(G.nonNull(
+              G.input({
+                name: "PostDraft_content_todolist",
+                fields: {
+                  id: {
+                    type: G.id
+                  },
+                  todo: {
+                    type: G.string
+                  }
+                }
+              })
+            )))
+          },
+        }
+      })
+    }
+  }
+})
+
+/* mutation
+mutation A {
+  createPost(
+    postDraft: {
+      author: {
+        id: "001"
+        name: "wenbo"
+      }
+      content: {
+        date: "2019-01-17"
+        lines: 1
+        todolist: [{ id: "000", todo: "first todo"}]
+      }
+    }
+  ) {
+    id
+  }
+}
+
+mutation B {
+  createPost(postDraft: {
+    author: {
+      id: "001"
+      name: "wenbo"
+    }
+    content: {
+      date: "2019-01-17"
+      lines: 1
+      todolist: [{ id: "000", todo: "first todo"}]
+      c: {
+        todolist: []
+        c: {
+          todolist: []
+          c: {
+            todolist: []
+          }
+        }
+      }
+    }
+  }) {
+    id
+  }
+}
+*/
+
 const UserType = G.object( {
   name: "User",
   description: ".",
@@ -517,6 +664,13 @@ const MutationType = G.object( {
     //   },
     //   resolve: ( _, { video } ) => createVideo( video )
     // },
+    createPost: {
+      type: PostType,
+      args: {
+        postDraft: { type: PostDraftInputType}
+      },
+      resolve: (_, postdraft) => { console.log(postdraft); return new Promise( res => res({ id_ : "007" })) }
+    }
   }
 } )
 
