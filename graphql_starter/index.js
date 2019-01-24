@@ -510,6 +510,22 @@ const QueryType = G.object( {
       },
       resolve: (_, { id }) => new Promise( res => res({ id_: "post_" + id }))
     },
+    nestedScalar: {
+      type: G.list(G.list(G.list(G.int))),
+      args: {
+        init: {
+          type: G.nonNull(G.int)
+        }
+      },
+      resolve: (_, { init }) => new Promise( res => res([[[init]]]))
+    },
+    nestedPost: {
+      type: G.list(G.list(G.list(PostType))),
+      args: {
+        id: { type: G.nonNull(G.id)}
+      },
+      resolve: (_, { id }) => new Promise( res => res( [[[{ id_: "post_" + id }]]]))
+    }
     // comment: {
     //   type: CommentType,
     //   args: {
