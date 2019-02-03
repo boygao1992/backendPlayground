@@ -643,11 +643,23 @@ newtype DotNetTime = DotNetTime {
 
 ### [servant – A Type-Level Web DSL](https://haskell-servant.readthedocs.io/en/stable/)
 > taking as input a description of the web API as a Haskell type.
-encode the structure of a Restful API into Type
+
 > Servant is then able to
 > - check that your server-side request handlers indeed implement your web API faithfully,
 > - automatically derive Haskell functions that can hit a web application that implements this API,
 > - generate a Swagger description or code for client functions in some other languages directly.
+
+#### 1. [Why is servant a type-level DSL?](https://haskell-servant.github.io/posts/2018-07-12-servant-dsl-typelevel.html)
+
+#### 2. [Servant, Type Families, and Type-level Everything](https://arow.info/blog/posts/2015-07-10-servant-intro.html)
+
+#### 3. [servant-persistent](https://www.parsonsmatt.org/2015/06/07/servant-persistent.html)
+
+#### 4. [Implementing a minimal version of haskell-servant](https://www.well-typed.com/blog/2015/11/implementing-a-minimal-version-of-haskell-servant/)
+
+### [Serv, kind-safe framework for type-safe APIs](https://github.com/tel/serv)
+
+### [Solga: simple typesafe routing](https://github.com/chpatrick/solga)
 
 
 ### [warp: A fast, light-weight web server for WAI applications.](http://hackage.haskell.org/package/warp)
