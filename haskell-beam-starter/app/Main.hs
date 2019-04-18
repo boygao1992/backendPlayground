@@ -18,6 +18,9 @@ import           Prelude
 
 import           Data.Text              (Text)
 
+(#) :: a -> (a -> b) -> b
+a # f = f a
+
 {- |
 type family Columnar (f :: * -> *) x where ...
 
@@ -78,23 +81,23 @@ main = do
     mapM_ (liftIO . print) users
 
   let sortUsersByFirstName =
-        orderBy_
-          (\user ->
-            ( asc_ (_userFirstName user)
-            , desc_ (_userLastName user)
+        all_ (_shoppingCartUsers shoppingCartDb)
+        # orderBy_
+            (\user ->
+              ( asc_ (_userFirstName user)
+              , desc_ (_userLastName user)
+              )
             )
-          )
-          (all_ (_shoppingCartUsers shoppingCartDb))
   runBeamSqliteDebug putStrLn connection $ do
     users <- runSelectReturningList $ select sortUsersByFirstName
     mapM_ (liftIO . print) users
 
   let boundedQuery :: Q SqliteSelectSyntax _ _ _
       boundedQuery =
-          limit_ 1
-        $ offset_ 1
-        $ orderBy_ (asc_ . _userFirstName)
-        $ all_ (_shoppingCartUsers shoppingCartDb)
+          all_ (_shoppingCartUsers shoppingCartDb)
+          # orderBy_ (asc_ . _userFirstName)
+          # offset_ 1
+          # limit_ 1
   runBeamSqliteDebug putStrLn connection $ do
     users <- runSelectReturningList (select boundedQuery :: SqlSelect SqliteSelectSyntax _)
     mapM_ (liftIO . print) users
