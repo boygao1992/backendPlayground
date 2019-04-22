@@ -1,7 +1,6 @@
 module Main (main) where
 
-import HaskellPersistentStarter (test)
-
+import Prelude
 
 main :: IO ()
-main = test
+main = pure ()
