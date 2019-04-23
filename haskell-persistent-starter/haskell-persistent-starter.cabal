@@ -34,8 +34,10 @@ library
                        , persistent-mysql-haskell >= 0.5
                        , resourcet >= 1.2
                        , transformers-base >= 0.4
+                       , transformers >= 0.5
                        , mtl >= 2.2
                        , monad-control >= 1.0
+                       , unliftio-core >= 0.1
                      
 
   ghc-options:         -Wall
@@ -56,6 +58,7 @@ executable haskell-persistent-starter
 
   build-depends:       base ^>= 4.12.0.0
                      , haskell-persistent-starter
+                     , persistent-mysql-haskell >= 0.5
                      
 
   ghc-options:         -Wall
