@@ -1,31 +1,10 @@
-{-# LANGUAGE
-  BlockArguments
-, DeriveDataTypeable
-, DeriveFoldable
-, DeriveFunctor
-, DeriveGeneric
-, DeriveTraversable
-, ExistentialQuantification
-, ExplicitForAll
-, FunctionalDependencies
-, FlexibleInstances
-, FlexibleContexts
-, GADTs
-, GeneralizedNewtypeDeriving
-, MultiParamTypeClasses
-, NamedFieldPuns
-, NoImplicitPrelude
-, OverloadedStrings
-, QuasiQuotes
-, RankNTypes
-, ScopedTypeVariables
-, StandaloneDeriving
-, TemplateHaskell
-, TypeFamilies
-#-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 module EsqueletoExample (example) where
 
-import Prelude
+import RIO hiding ((^.), on, set, (<&>))
+import Prelude (putStrLn, print)
 
 import Control.Monad (forM_, void)
 import Control.Monad.IO.Class (MonadIO, liftIO)

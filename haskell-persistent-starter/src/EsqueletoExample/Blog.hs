@@ -1,37 +1,9 @@
-{-# LANGUAGE
-  BlockArguments
-, DeriveDataTypeable
-, DeriveFoldable
-, DeriveFunctor
-, DeriveGeneric
-, DeriveTraversable
-, ExistentialQuantification
-, ExplicitForAll
-, FunctionalDependencies
-, FlexibleInstances
-, FlexibleContexts
-, GADTs
-, GeneralizedNewtypeDeriving
-, MultiParamTypeClasses
-, NamedFieldPuns
-, NoImplicitPrelude
-, OverloadedStrings
-, QuasiQuotes
-, RankNTypes
-, StandaloneDeriving
-, ScopedTypeVariables
-, TemplateHaskell
-, TypeFamilies
-, UndecidableInstances
-#-}
-
 module EsqueletoExample.Blog
 ( runBlogT
 ) where
 
 import Prelude
 
-import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Logger (MonadLogger, NoLoggingT (..))
 import Control.Monad.Reader
 import Database.Persist.MySQL (MySQLConnectInfo)
@@ -50,8 +22,6 @@ newtype BlogT m a = BlogT
 
 instance MonadTrans BlogT where
   lift = BlogT . lift . lift
-
-deriving instance (MonadBase b m) => MonadBase b (BlogT m)
 
 -- instance MonadTransControl BlogT where
 --   type StT BlogT a = StT NoLoggingT (StT (ReaderT MySQLConnectInfo) a)
